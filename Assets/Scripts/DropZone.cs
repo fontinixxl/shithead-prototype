@@ -2,9 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
+    public int spaceingFactor = 9;
+
+    private HorizontalLayoutGroup layout;
+
+    public void Start()
+    {
+        layout =GetComponent<HorizontalLayoutGroup>();
+    }
     public void OnDrop(PointerEventData eventData)
     {
         //Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
@@ -20,6 +29,13 @@ public class DropZone : MonoBehaviour, IDropHandler
             // Set the draggable object position the the dragZone so all the draggable object
             // will stack on it; on on the top of each other.
             draggable.transform.position = transform.position;
+        }
+        
+        // If the dropZone we has a layout
+        if (layout != null)
+        {
+
+            layout.spacing -= spaceingFactor;
         }
     }
 }
