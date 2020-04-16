@@ -12,6 +12,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public float maxCardRotation = 15.0f;
 
     private GameObject placeholder;
+    private Transform originalParent;
 
     public void Start()
     {
@@ -32,7 +33,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         //Debug.Log("OnBeginDrag");
 
         // Save the original parent
-        parentToReturnTo = transform.parent;
+        parentToReturnTo = originalParent = transform.parent;
 
         // Set the index position on the grid for the ghost to be the same as the card.
         // Meaning once we drag the card there is gonna be a empty space at the same exact
@@ -66,19 +67,15 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         // If at this point the parent of the Draggable is the Hand
         // meaning we haven't dropped the card to the DropZone, we set the rotation back to 0.
         // and we position the card on the layout at the same place it was before dragging.
-        // TODO: Refactor-> look for a better way to dettect that the card is back to the Hand
-        if (transform.parent.name == "Hand")
+        if (transform.parent == originalParent)
         {
             transform.rotation = Quaternion.identity;
             transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
+            // Allow raycast only if the card comes back to the hand again
+            GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
 
         // Once the card is back to the hand we can deactivate the placeholder until further use.
         placeholder.SetActive(false);
-
-        // Set back to the original value; to block Raycasts
-        // TODO: Change that
-        if (parentToReturnTo.name != "DropZone")
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
 }
