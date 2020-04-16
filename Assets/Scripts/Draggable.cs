@@ -24,7 +24,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         // TODO: if I parent the card to only the transform the placeholder is not keeping
         // the card's position (as soon as we drag the card get rearranged) but if we release the
         // card it is getting back to the original position. Consider to implement this approach instead.
-        placeholder.transform.parent = transform.parent;
+        placeholder.transform.SetParent(transform.parent);
         // set active to false and activate just when required (when starting dragging the card)
         placeholder.SetActive(false);
     }

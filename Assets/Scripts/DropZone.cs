@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
+    public void Start()
+    {
+
+    }
+
     public void OnDrop(PointerEventData eventData)
     {
         //Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
