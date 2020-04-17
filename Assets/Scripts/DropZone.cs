@@ -6,9 +6,12 @@ using UnityEngine.UI;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
-    public void Start()
-    {
 
+    //public Player player;
+
+    public void Awake()
+    {
+        //player = GetComponentInParent<Player>();
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -26,6 +29,8 @@ public class DropZone : MonoBehaviour, IDropHandler
             // Set the draggable object position the the dragZone so all the draggable object
             // will stack on it; on on the top of each other.
             draggable.transform.position = transform.position;
+
+            GameManager.instance.GetCurrentTurnPlayer().cardDrop = true;
         }
     }
 }

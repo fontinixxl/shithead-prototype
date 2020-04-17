@@ -10,10 +10,13 @@ public class GameManager : MonoBehaviour
     public GameObject cardPrefab;
     public Transform spawnPoint;
     public Transform[] cardZones;
+    //public DropZone dropZone;
     public Color[] spiteColors;
     public float cardDelay = 0.4f;
     public int numCards = 9;
 
+
+    private Player currentTurnPlayer;
     private GameObject[] cards;
     private List<Player> players;
 
@@ -31,13 +34,34 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentTurnPlayer = null;
         cards = new GameObject[numCards];
-        StartCoroutine(DealCards());
+        StartCoroutine(InitGame());
+    }
+
+    private IEnumerator InitGame()
+    {
+        // Start off by running the "DealCards' coroutine but don't return until it's finished.
+        yield return StartCoroutine(DealCards());
+        StartCoroutine(GameLoop());
+    }
+
+    private IEnumerator GameLoop()
+    {
+        foreach (Player player in players)
+        {
+            currentTurnPlayer = player;
+            yield return StartCoroutine(player.PlayRound());
+
+        }
+
+        StartCoroutine(GameLoop());
     }
 
 
     private IEnumerator DealCards()
     {
+        //Debug.Log("DealCards method()");
         int cardIndex = 0;
         int cardsPerRow = 3;
 
@@ -66,10 +90,10 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    // Update is called once per frame
-    void Update()
+
+    public Player GetCurrentTurnPlayer()
     {
-        
+        return currentTurnPlayer;
     }
 
     //Call this to add the passed in Player to the List of Player objects.

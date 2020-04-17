@@ -6,16 +6,19 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public CanvasGroup[] layoutZones;
+    public bool cardDrop = false;
+    public int currentActiveLayoutIndex;
 
-    private int currentActiveLayoutIndex;
-
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         // Register this player with our instance of GameManager
         // This allows the GameManager to issue commands.
         GameManager.instance.RegisterNewPlayer(this);
+    }
 
+    // Start is called before the first frame update
+    void Start()
+    {
         currentActiveLayoutIndex = 0;
     }
     
@@ -25,12 +28,13 @@ public class Player : MonoBehaviour
         // allow to either drag the card or not.
         layoutZones[currentActiveLayoutIndex].blocksRaycasts = false;
         currentActiveLayoutIndex++;
+        // After the third layout, set back to 0 using module
+        currentActiveLayoutIndex %= layoutZones.Length;
         layoutZones[currentActiveLayoutIndex].blocksRaycasts = true;
     }
 
-    public void PrepareLayoutToPlay()
+    private void SelectActiveLayout()
     {
-        Debug.Log("active Loyout!");
 
         // If there are no card to play in the curernt layout
         if (!IsThereAnyCardLeft())
@@ -47,22 +51,23 @@ public class Player : MonoBehaviour
     private bool IsThereAnyCardLeft()
     {
         Card[] cards = layoutZones[currentActiveLayoutIndex].GetComponentsInChildren<Card>();
-        return (cards.Length <= 0) ? true : false;
+        return (cards.Length <= 0) ? false : true;
+    }
+
+    public IEnumerator PlayRound()
+    {
+        cardDrop = false;
+        SelectActiveLayout();
+        while(!cardDrop)
+        {
+            yield return null;
+        }
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //foreach (CanvasGroup layout in layoutZones)
-        //{
-        //    Card[] cards = layout.GetComponentsInChildren<Card>();
-        //    Debug.Log("Zone : " + layout.name + " has " + cards.Length + " cards");
-        //}
-
-        //if (layoutZones[currentActiveLayoutIndex].GetComponentsInChildren<Card>().Length <= 0)
-        //{
-        //    SetNextActiveLayout();
-        //}
     }
 
 
