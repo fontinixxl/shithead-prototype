@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.EventSystems;
 public class Card : Draggable
 {
     public Color blindColor;
-    public Color normalColor;
 
-    // Update is called once per frame
-    void Update()
+    private Color normalColor;
+    
+    private bool blind = false;
+
+    public override void OnBeginDrag(PointerEventData eventData)
     {
+        if (blind)
+            FaceUpCard();
 
+        base.OnBeginDrag(eventData);
     }
 
 
@@ -26,11 +31,23 @@ public class Card : Draggable
     }
     public void BlindCard()
     {
+        blind = true;
+        normalColor = GetComponent<Image>().color;
         GetComponent<Image>().color = blindColor;
         Text[] rankTexts = GetComponentsInChildren<Text>();
         for (int i = 0; i < rankTexts.Length; i++)
         {
             rankTexts[i].enabled = false;
+        }
+    }
+
+    public void FaceUpCard()
+    {
+        GetComponent<Image>().color = normalColor;
+        Text[] rankTexts = GetComponentsInChildren<Text>();
+        for (int i = 0; i < rankTexts.Length; i++)
+        {
+            rankTexts[i].enabled = true;
         }
     }
 }

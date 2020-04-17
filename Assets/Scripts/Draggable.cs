@@ -28,10 +28,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         // set active to false and activate just when required (when starting dragging the card)
         placeholder.SetActive(false);
     }
-    public void OnBeginDrag(PointerEventData eventData)
+    public virtual void OnBeginDrag(PointerEventData eventData)
     {
         //Debug.Log("OnBeginDrag");
-
         // Save the original parent
         parentToReturnTo = originalParent = transform.parent;
 
