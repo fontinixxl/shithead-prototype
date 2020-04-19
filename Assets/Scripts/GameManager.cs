@@ -10,12 +10,11 @@ public class GameManager : MonoBehaviour
     public GameObject cardPrefab;
     public Transform spawnPoint;
     public Transform[] cardZones;
-    //public DropZone dropZone;
     public Color[] spiteColors;
     public float cardDelay = 0.4f;
     public int numCards = 9;
 
-
+    private Deck deck;
     private Player currentTurnPlayer;
     private GameObject[] cards;
     private List<Player> players;
@@ -34,8 +33,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentTurnPlayer = null;
         cards = new GameObject[numCards];
+        //deck = new Deck();
+
+        currentTurnPlayer = null;
         StartCoroutine(InitGame());
     }
 
