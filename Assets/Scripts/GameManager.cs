@@ -7,16 +7,11 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
-    public GameObject cardPrefab;
-    public Transform spawnPoint;
+    public Deck deck;
     public Transform[] cardZones;
-    public Color[] spiteColors;
     public float cardDelay = 0.4f;
-    public int numCards = 9;
 
-    private Deck deck;
     private Player currentTurnPlayer;
-    private GameObject[] cards;
     private List<Player> players;
 
     private void Awake()
@@ -33,9 +28,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cards = new GameObject[numCards];
-        //deck = new Deck();
-
+        deck.Initialize();
         currentTurnPlayer = null;
         StartCoroutine(InitGame());
     }
@@ -51,9 +44,16 @@ public class GameManager : MonoBehaviour
     {
         foreach (Player player in players)
         {
+            Debug.Log("Player " + player.name);
             currentTurnPlayer = player;
             yield return StartCoroutine(player.PlayRound());
 
+            if (currentTurnPlayer.HasNoCardsLeft())
+            {
+                Debug.Log("Player " + currentTurnPlayer.name + " Won!!");
+                yield break;
+                // TODO: Remove the player from the list of active players as it can't be shitHead
+            }
         }
 
         StartCoroutine(GameLoop());
@@ -72,17 +72,14 @@ public class GameManager : MonoBehaviour
             {
                 for (int k = 0; k < players.Count; k++)
                 {
-                    //Debug.Log("card zone " + i + " , card " + j + " player " + k);
 
-                    cards[cardIndex] = Instantiate(cardPrefab, spawnPoint.position, Quaternion.identity) as GameObject;
-                    cards[cardIndex].GetComponent<Transform>().SetParent(cardZones[i]);
+                    Card card = deck.DrawCard();
+                    card.GetComponent<Transform>().SetParent(cardZones[i]);
 
-                    Card card = cards[cardIndex].GetComponent<Card>();
-                    card.SetRankAndSpite(Random.Range(1, 10), spiteColors[Random.Range(0, 3)]);
-
-                    if (cardZones[i].name == "BlindZone")
+                    // Cards are already blind in the Deck
+                    if (cardZones[i].name != "BlindZone")
                     {
-                        card.BlindCard();
+                        card.FaceUpCard();
                     }
 
                     yield return new WaitForSeconds(cardDelay);

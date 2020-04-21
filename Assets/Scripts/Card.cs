@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,12 +12,20 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public float minCardRotation = -15.0f;
     public float maxCardRotation = 15.0f;
     public Color blindColor;
+    public int rank;
 
     private Color normalColor;
     private GameObject placeholder;
-    private Transform originalParent;
+    [HideInInspector] public Transform originalParent;
     private bool blind = false;
-    private int rank;
+    private static readonly Dictionary<int, String> ranks = new Dictionary<int, String>
+    {
+        {1, "A" },
+        {11, "J" },
+        {12, "Q" },
+        {13, "K" }
+    };
+
 
     public void Start()
     {
@@ -31,12 +40,15 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         placeholder.transform.SetParent(transform.parent);
         // set active to false and activate just when required (when starting dragging the card)
         placeholder.SetActive(false);
+
+        // By default, when the card is created (as part of the deck) cannot be draggable.
+        //GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
     public virtual void OnBeginDrag(PointerEventData eventData)
     {
 
-        if (blind)
+        if (IsBlind())
             FaceUpCard();
 
         // Save the original parent
@@ -53,7 +65,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         transform.SetParent(transform.parent.parent);
 
         // Apply a random rotation on the Z axi as soon as we start draggin the card.
-        transform.Rotate(0.0f, 0.0f, Random.Range(minCardRotation, maxCardRotation));
+        transform.Rotate(0.0f, 0.0f, UnityEngine.Random.Range(minCardRotation, maxCardRotation));
 
         // In order to dettect the "Drop Zone" we need to have the Raycast on (off by default)
         GetComponent<CanvasGroup>().blocksRaycasts = false;
@@ -88,10 +100,11 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
     public void SetRankAndSpite(int rank, Color spite)
     {
+        this.rank = rank;
         Text[] rankTexts = GetComponentsInChildren<Text>();
         for (int i = 0; i < rankTexts.Length; i++)
         {
-            rankTexts[i].text = rank.ToString();
+            rankTexts[i].text = (rank > 1 && rank < 11) ? rank.ToString() : ranks[rank];
             rankTexts[i].color = spite;
         }
     }
@@ -107,8 +120,19 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         }
     }
 
+    public bool IsBlind()
+    {
+        return blind;
+    }
+
+    public int GetRank()
+    {
+        return rank;
+    }
+
     public void FaceUpCard()
     {
+        blind = false;
         GetComponent<Image>().color = normalColor;
         Text[] rankTexts = GetComponentsInChildren<Text>();
         for (int i = 0; i < rankTexts.Length; i++)
