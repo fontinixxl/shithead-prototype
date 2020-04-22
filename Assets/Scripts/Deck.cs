@@ -33,7 +33,7 @@ public class Deck: MonoBehaviour
             {
                 GameObject cardGO = Instantiate(cardPrefab, spawnPoint.position, Quaternion.identity) as GameObject;
                 Card card = cardGO.GetComponent<Card>();
-                //card.GetComponent<Transform>().SetParent(spawnPoint);
+
                 card.SetRankAndSpite(j, suitColors[i]);
                 card.BlindCard();
                 cards.Add(card);

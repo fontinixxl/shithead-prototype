@@ -8,11 +8,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
     public Deck deck;
-    public Transform[] cardZones;
     public float cardDelay = 0.4f;
+    // TODO: Refactor to count from the playZone Prefab
+    public int playZones = 3;       // Total zones to place cards
 
     private Player currentTurnPlayer;
     private List<Player> players;
+    private const int CARDS_PER_ROW = 3;
 
     private void Awake()
     {
@@ -44,7 +46,6 @@ public class GameManager : MonoBehaviour
     {
         foreach (Player player in players)
         {
-            Debug.Log("Player " + player.name);
             currentTurnPlayer = player;
             yield return StartCoroutine(player.PlayRound());
 
@@ -62,28 +63,23 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator DealCards()
     {
-        //Debug.Log("DealCards method()");
-        int cardIndex = 0;
-        int cardsPerRow = 3;
-
-        for (int i = 0; i < cardZones.Length; i++)
+        for (int i = (playZones - 1); i >= 0; i--)
         {
-            for (int j = 0; j < cardsPerRow; j++)
+            for (int j = 0; j < CARDS_PER_ROW; j++)
             {
-                for (int k = 0; k < players.Count; k++)
+                foreach (var player in players)
                 {
 
                     Card card = deck.DrawCard();
-                    card.GetComponent<Transform>().SetParent(cardZones[i]);
+                    card.PlaceCardOnZone(player.layoutZones[i].GetComponent<Transform>());
 
                     // Cards are already blind in the Deck
-                    if (cardZones[i].name != "BlindZone")
+                    if (player.layoutZones[i].name != "BlindZone")
                     {
                         card.FaceUpCard();
                     }
 
                     yield return new WaitForSeconds(cardDelay);
-                    cardIndex++;
                 }
             }
         }

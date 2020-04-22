@@ -172,8 +172,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88a586aeb7064ae428397f262f9fbd02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lastPlacedCard: {fileID: 0}
-  pile: []
   hand: {fileID: 2008511964}
   blindZone: {fileID: 2139545535}
 --- !u!114 &23682142
@@ -453,9 +451,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layoutZones:
-  - {fileID: 2008511968}
-  - {fileID: 1381141187}
-  - {fileID: 2139545536}
+  - {fileID: 2008511963}
+  - {fileID: 1381141185}
+  - {fileID: 2139545534}
   cardDrop: 0
   currentActiveLayoutIndex: 0
   dropZone: {fileID: 23682141}
@@ -662,6 +660,7 @@ MonoBehaviour:
   cardPrefab: {fileID: 2163766618842186015, guid: 61ef57def75881f4aa2ca02d6fd54676,
     type: 3}
   cards: []
+  spawnPoint: {fileID: 0}
   suitColors:
   - {r: 1, g: 0, b: 0.83137256, a: 1}
   - {r: 0, g: 0.49019608, b: 1, a: 1}

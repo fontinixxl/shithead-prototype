@@ -26,7 +26,6 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {13, "K" }
     };
 
-
     public void Start()
     {
         // Create a placeholder for the card to keep the place on the layout in case
@@ -128,6 +127,11 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public int GetRank()
     {
         return rank;
+    }
+
+    public void PlaceCardOnZone(Transform zone)
+    {
+        transform.SetParent(zone);
     }
 
     public void FaceUpCard()

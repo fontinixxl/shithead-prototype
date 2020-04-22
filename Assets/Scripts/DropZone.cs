@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
-    [HideInInspector] public Card lastCard;
-    [HideInInspector] public List<Card> pile;
     public Transform hand;
     public Transform blindZone;
+    private List<Card> pile;
+    private Card lastCard;
 
     public void Awake()
     {
@@ -24,9 +24,9 @@ public class DropZone : MonoBehaviour, IDropHandler
         Card card = eventData.pointerDrag.GetComponent<Card>();
         if (card != null)
         {
-            GameManager.instance.GetCurrentTurnPlayer().cardDrop = true;
+            GameManager.instance.GetCurrentTurnPlayer().movementDone = true;
             // Test rules: if the card's rank is less than the last placed card return
-            if (lastCard != null &&  card.rank < lastCard.rank)
+            if (lastCard != null &&  card.GetRank() < lastCard.GetRank())
             {
                 // TODO: Improve
                 // If the card is comming from the Blind Zone, and it doesn't fit to the pile,
@@ -40,7 +40,6 @@ public class DropZone : MonoBehaviour, IDropHandler
                 return;
             }
 
-            Debug.Log("Card " + card.GetRank().ToString() + " Dropped");
             lastCard = card;
             pile.Add(card);
 
@@ -52,7 +51,7 @@ public class DropZone : MonoBehaviour, IDropHandler
             // will stack on it; on on the top of each other.
             card.transform.position = transform.position;
 
-            GameManager.instance.GetCurrentTurnPlayer().cardDrop = true;
+            GameManager.instance.GetCurrentTurnPlayer().movementDone = true;
             //Debug.Log(GameManager.instance.GetCurrentTurnPlayer().HasDroppedCard());
         }
 
@@ -63,6 +62,16 @@ public class DropZone : MonoBehaviour, IDropHandler
     {
         gameObject.SetActive(false);
         gameObject.SetActive(true);
+    }
+
+    public List<Card> GetPileOfCards()
+    {
+        return pile;
+    }
+
+    public Card GetLastCardOnPile()
+    {
+        return lastCard;
     }
 
     // Will be called when the gameObject is deactivated

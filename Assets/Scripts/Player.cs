@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public CanvasGroup[] layoutZones;
-    public bool cardDrop = false;
-    public int currentActiveLayoutIndex;
+    public GameObject[] layoutZones;
+    public bool movementDone = false;
     public DropZone dropZone;
-    private bool emptyHand = false;
+    private int currentActiveLayoutIndex;
+
     private void Awake()
     {
         // Register this player with our instance of GameManager
@@ -27,36 +27,32 @@ public class Player : MonoBehaviour
     // Turn off the Raycast of the currentActive Layout and set it back to the hand
     private void ResetActiveLayout()
     {
-        Debug.Log("ResetActiveLayout");
-        layoutZones[currentActiveLayoutIndex].blocksRaycasts = false;
+        DeactivateCurrentLayout();
         currentActiveLayoutIndex = 0;
-        layoutZones[currentActiveLayoutIndex].blocksRaycasts = true;
+        ActivateCurrentLayout();
     }
     
     private void SetNextActiveLayout()
     {
-        // Blocking/unblocking the Raycast element from the CanvasGroup component
-        // allow to either drag the card or not.
-        layoutZones[currentActiveLayoutIndex].blocksRaycasts = false;
         currentActiveLayoutIndex++;
         // After the third layout, set back to 0 using module
         currentActiveLayoutIndex %= layoutZones.Length;
-        layoutZones[currentActiveLayoutIndex].blocksRaycasts = true;
     }
 
     private void SelectActiveLayout()
     {
 
-        // If there are no card to play in the curernt layout
+        // If there isn't a card to play in the currernt layout
         if (!IsThereAnyCardLeft())
         {
-            // Set the next layout (in order) as active and deactivate the current one.
+            // Increment the current active layout index
             SetNextActiveLayout();
+            // Check again (recursive) for the current active layout if there are cards left
             SelectActiveLayout();
-        } else 
-        {
-            layoutZones[currentActiveLayoutIndex].blocksRaycasts = true;
         }
+
+        // Activate the correct layout
+        ActivateCurrentLayout();
     }
 
     // Returns whether there is any card left in the current layoutZone
@@ -72,57 +68,48 @@ public class Player : MonoBehaviour
 
     public IEnumerator PlayRound()
     {
-        cardDrop = false;
+        movementDone = false;
         SelectActiveLayout();
-        Debug.Log("active layout index = " + currentActiveLayoutIndex);
-        //Debug.Log("Movement allowed: " + MovementAvailable());
+
         if (!MovementAvailable())
         {
             PickUpPile();
-            cardDrop = true;
-
+            yield break;
         }
-        while(!cardDrop)
+
+        // Wait for the player to play a card
+        while(!HasPlayedCards())
         {
             yield return null;
         }
 
+        // Every time the player drop a card, the active layout will be the Hand
         ResetActiveLayout();
-        // Once the player has put some cards, we have to draw from the deck (if some left)
+
+        // TODO: Once the player has put some cards, we have to draw from the deck (if some left)
     }
 
 
     private bool MovementAvailable()
     {
-        Card lastCardDropped = dropZone.lastCard;
+        Card lastCardDropped = dropZone.GetLastCardOnPile();
 
-        // TODO: refactor
         // If there isn't any card on the pile (the player can put any card)
         // or current layout is the blind, movement always allowed ; movement available ->true
         if (lastCardDropped == null)
-        {
-            Debug.Log("No card in the pile: movement allowed");
             return true;
-
-        }
 
         Card[] cards = GetCardsFromActiveLayout();
         if (cards == null)
-        {
-            Debug.Log("No card in the active Layout; movement available = false");
             return false;
-        }
-
 
         foreach (Card card in cards)
         {
             if (card.IsBlind() || (card.GetRank() >= lastCardDropped.GetRank())) 
-            {
-                Debug.Log("Card Blind or card with a higher rank: movement allowed");
                 return true;
-            }
         }
 
+        // If none of the previous conditions is met, no movement available
         return false;
     }
 
@@ -131,11 +118,11 @@ public class Player : MonoBehaviour
     {
         // Disable Dragging from the current layout, as after picking up cards the only
         // active layout must be the Hand
-        layoutZones[currentActiveLayoutIndex].blocksRaycasts = false;
+        DeactivateCurrentLayout();
         // Reset current active layout to be the hand
         // TODO: Look for a better way than hardcode the index of the public value...
         currentActiveLayoutIndex = 0;
-        foreach (Card card in dropZone.pile)
+        foreach (Card card in dropZone.GetPileOfCards())
         {
             // TODO: change how I get the Hand Zone
             Transform handZone = layoutZones[currentActiveLayoutIndex].GetComponent<Transform>();
@@ -151,6 +138,7 @@ public class Player : MonoBehaviour
         dropZone.ResetPile();
     }
 
+    // Loop through all the layouts and return whether there is any card left in them.
     public bool HasNoCardsLeft()
     {
         for (int i = 0; i < layoutZones.Length; i++)
@@ -162,15 +150,21 @@ public class Player : MonoBehaviour
         return true;
     }
 
-    // Update is called once per frame
-    void Update()
+    // Turn on current layout raycast so the player can drag cards on it.
+    private void ActivateCurrentLayout()
     {
-
+        layoutZones[currentActiveLayoutIndex].GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
 
-    public bool HasDroppedCard()
+    // Turn off current layout raycast so the player can't drag cards on it.
+    private void DeactivateCurrentLayout()
     {
-        return cardDrop;
+        layoutZones[currentActiveLayoutIndex].GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
+    public bool HasPlayedCards()
+    {
+        return movementDone;
     }
 
 }
