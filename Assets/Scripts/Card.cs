@@ -24,7 +24,7 @@ public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHa
     public void Start()
     {
         // Create a placeholder for the card to keep the place on the layout in case
-        // we bring the card back to the hand and therefor keeping the original position.
+        // we bring the card back to the hand, therefor keeping the original position.
         placeholder = new GameObject{name = "GhostCard"};
         RectTransform rt = placeholder.AddComponent<RectTransform>();
         rt.sizeDelta = GetComponent<RectTransform>().sizeDelta;

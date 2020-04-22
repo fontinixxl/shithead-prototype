@@ -451,6 +451,7 @@ MonoBehaviour:
   - {fileID: 2008511963}
   - {fileID: 1381141185}
   - {fileID: 2139545534}
+  handTransform: {fileID: 2008511964}
   movementDone: 0
   dropZone: {fileID: 23682141}
 --- !u!1 &963194225

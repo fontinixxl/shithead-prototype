@@ -24,7 +24,6 @@ public class DropZone : MonoBehaviour, IDropHandler
         Card card = eventData.pointerDrag.GetComponent<Card>();
         if (card != null)
         {
-            GameManager.instance.GetCurrentTurnPlayer().movementDone = true;
             // Test rules: if the card's rank is less than the last placed card return
             // TODO: Replace with compareTo() (not implemented yet).
             if (lastCard != null &&  card.GetRank() < lastCard.GetRank())

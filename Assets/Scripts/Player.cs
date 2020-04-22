@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public GameObject[] layoutZones;
+    public Transform handTransform;
     public bool movementDone = false;
     public DropZone dropZone;
     private int currentActiveLayoutIndex;

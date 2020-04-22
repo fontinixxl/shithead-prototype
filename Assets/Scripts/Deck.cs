@@ -63,7 +63,7 @@ public class Deck: MonoBehaviour
         }
     }
 
-    public Card DrawCard()
+    public Card Draw()
     {
         int lastCard = cards.Count - 1;
 
@@ -89,4 +89,8 @@ public class Deck: MonoBehaviour
         return drew;
     }
 
+    public bool IsEmpty()
+    {
+        return cards.Count > 0 ? false : true;
+    }
 }

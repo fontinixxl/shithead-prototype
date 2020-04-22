@@ -55,6 +55,16 @@ public class GameManager : MonoBehaviour
                 yield break;
                 // TODO: Remove the player from the list of active players as it can't be shitHead
             }
+
+            // If player has played at least one card and there are cards left on the deck
+            if (currentTurnPlayer.HasPlayedCards() && !deck.IsEmpty())
+            {
+                Card card = deck.Draw();
+                card.FaceUpCard();
+                yield return new WaitForSeconds(1);
+                card.PlaceCardOnZone(currentTurnPlayer.handTransform);
+                
+            }
         }
 
         StartCoroutine(GameLoop());
@@ -70,7 +80,7 @@ public class GameManager : MonoBehaviour
                 foreach (var player in players)
                 {
 
-                    Card card = deck.DrawCard();
+                    Card card = deck.Draw();
                     card.PlaceCardOnZone(player.layoutZones[i].GetComponent<Transform>());
 
                     // Cards are already blind in the Deck
