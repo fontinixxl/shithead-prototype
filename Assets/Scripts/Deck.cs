@@ -34,7 +34,7 @@ public class Deck: MonoBehaviour
                 GameObject cardGO = Instantiate(cardPrefab, spawnPoint.position, Quaternion.identity) as GameObject;
                 Card card = cardGO.GetComponent<Card>();
 
-                card.SetRankAndSpite(j, suitColors[i]);
+                card.SetRankAndSpite((CardValue.Rank)j, (CardValue.Suit)i, suitColors[i]);
                 card.BlindCard();
                 cards.Add(card);
             }

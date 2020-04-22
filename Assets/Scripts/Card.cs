@@ -5,26 +5,21 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [HideInInspector] public Transform parentToReturnTo;
 
     public float minCardRotation = -15.0f;
     public float maxCardRotation = 15.0f;
     public Color blindColor;
-    public int rank;
+
+    public CardValue.Rank rank;
+    public CardValue.Suit suit;
 
     private Color normalColor;
     private GameObject placeholder;
     [HideInInspector] public Transform originalParent;
     private bool blind = false;
-    private static readonly Dictionary<int, String> ranks = new Dictionary<int, String>
-    {
-        {1, "A" },
-        {11, "J" },
-        {12, "Q" },
-        {13, "K" }
-    };
 
     public void Start()
     {
@@ -40,8 +35,6 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         // set active to false and activate just when required (when starting dragging the card)
         placeholder.SetActive(false);
 
-        // By default, when the card is created (as part of the deck) cannot be draggable.
-        //GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
     public virtual void OnBeginDrag(PointerEventData eventData)
@@ -97,14 +90,16 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         placeholder.SetActive(false);
     }
 
-    public void SetRankAndSpite(int rank, Color spite)
+    public void SetRankAndSpite(CardValue.Rank rank, CardValue.Suit suit, Color color)
     {
         this.rank = rank;
+        this.suit = suit;
+
         Text[] rankTexts = GetComponentsInChildren<Text>();
         for (int i = 0; i < rankTexts.Length; i++)
         {
-            rankTexts[i].text = (rank > 1 && rank < 11) ? rank.ToString() : ranks[rank];
-            rankTexts[i].color = spite;
+            rankTexts[i].text = ((int)rank).ToString();
+            rankTexts[i].color = color;
         }
     }
     public void BlindCard()
@@ -124,7 +119,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         return blind;
     }
 
-    public int GetRank()
+    public CardValue.Rank GetRank()
     {
         return rank;
     }
@@ -143,5 +138,10 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
             rankTexts[i].enabled = true;
         }
+    }
+
+    public int CompareTo(Card other)
+    {
+        throw new NotImplementedException();
     }
 }
