@@ -9,7 +9,8 @@ public class DropZone : MonoBehaviour, IDropHandler
     public Transform hand;
     public Transform blindZone;
     private List<Card> pile;
-    private Card lastCard;
+    // TODO: temporal just to check the value
+    public Card lastCard;
 
     public void Awake()
     {
@@ -40,20 +41,60 @@ public class DropZone : MonoBehaviour, IDropHandler
                 return;
             }
 
-            lastCard = card;
             pile.Add(card);
 
             // Set the parentToReturnto the "DragZone" (so it doesn't get back to the HandZone)
             // This is because the Draggable's OnEndDrag() method, by default, resets the parent 
             // to the original (the one it had when OnBeginDrag() was firts called)
+
             card.parentToReturnTo = transform;
             // Set the card object position the the dragZone so all the card object
             // will stack on it; on on the top of each other.
+
             card.transform.position = transform.position;
 
-            GameManager.instance.GetCurrentTurnPlayer().movementDone = true;
-            //Debug.Log(GameManager.instance.GetCurrentTurnPlayer().HasDroppedCard());
+            card.transform.SetParent(transform);
+
+            bool movementDone = true;
+            // Test: Special cards
+            switch (card.GetRank())
+            {
+                case CardValue.Rank.Two:
+                    lastCard = null;
+                    break;
+                case CardValue.Rank.Three:
+                    // If it's a three the previous one will stay as last card to count for the next player
+                    // Make it transparent so the player can see the previous card.
+                    card.ModifyAlphaColor(0.4f);
+                    break;
+                case CardValue.Rank.Ten:
+                    // Reset pile
+                    Invoke("BurnPile", 1.0f);
+                    // If it's a 10, the player takes another turn
+                    movementDone = false;
+                    break;
+                default:
+                    lastCard = card;
+                    break;
+            }
+
+            GameManager.instance.GetCurrentTurnPlayer().movementDone = movementDone;
         }
+
+    }
+
+    private void BurnPile()
+    {
+        gameObject.SetActive(false);
+        foreach (Transform child in transform)
+        {
+            if (child.GetComponent<Card>() == null)
+                continue;
+
+            child.gameObject.SetActive(false);
+        }
+
+        gameObject.SetActive(true);
 
     }
 

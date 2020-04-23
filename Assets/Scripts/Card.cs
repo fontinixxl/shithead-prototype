@@ -90,7 +90,7 @@ public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHa
         placeholder.SetActive(false);
     }
 
-    public void SetRankAndSpite(CardValue.Rank rank, CardValue.Suit suit, Color color)
+    public void SetRankAndSpite(CardValue.Rank rank, CardValue.Suit suit, Color color, String label)
     {
         this.rank = rank;
         this.suit = suit;
@@ -98,7 +98,7 @@ public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHa
         Text[] rankTexts = GetComponentsInChildren<Text>();
         for (int i = 0; i < rankTexts.Length; i++)
         {
-            rankTexts[i].text = ((int)rank).ToString();
+            rankTexts[i].text = label;
             rankTexts[i].color = color;
         }
     }
@@ -137,6 +137,22 @@ public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHa
         for (int i = 0; i < rankTexts.Length; i++)
         {
             rankTexts[i].enabled = true;
+        }
+    }
+
+    public void ModifyAlphaColor(float alpha)
+    {
+        Image image = GetComponent<Image>();
+        var tempColor = image.color;
+        tempColor.a = alpha;
+        image.color = tempColor;
+
+        Text[] rankTexts = GetComponentsInChildren<Text>();
+        for (int i = 0; i < rankTexts.Length; i++)
+        {
+            tempColor = rankTexts[i].color;
+            tempColor.a = alpha;
+            rankTexts[i].color = tempColor;
         }
     }
 

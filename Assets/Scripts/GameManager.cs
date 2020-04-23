@@ -56,20 +56,27 @@ public class GameManager : MonoBehaviour
                 // TODO: Remove the player from the list of active players as it can't be shitHead
             }
 
-            // If player has played at least one card and there are cards left on the deck
-            if (currentTurnPlayer.HasPlayedCards() && !deck.IsEmpty())
+            int totalCardsLeft = currentTurnPlayer.GetTotalCardsOnHand();
+
+            // Draw a cad if all conditions meet:
+            // 1.- player has played at least one card
+            // 2.- there are cards left on the deck
+            // 3.- player has less than 3 cards on the hand
+            if (currentTurnPlayer.HasPlayedCards() && !deck.IsEmpty() && totalCardsLeft < CARDS_PER_ROW)
             {
-                Card card = deck.Draw();
-                card.FaceUpCard();
-                yield return new WaitForSeconds(1);
-                card.PlaceCardOnZone(currentTurnPlayer.handTransform);
-                
+                // Draw cards (max 3 oviously) untill having 3
+                for (int i = 0; i < (CARDS_PER_ROW - totalCardsLeft) ; i++)
+                {
+                    Card card = deck.Draw();
+                    card.FaceUpCard();
+                    yield return new WaitForSeconds(0.5f);
+                    card.PlaceCardOnZone(currentTurnPlayer.handTransform);
+                }
             }
         }
 
         StartCoroutine(GameLoop());
     }
-
 
     private IEnumerator DealCards()
     {

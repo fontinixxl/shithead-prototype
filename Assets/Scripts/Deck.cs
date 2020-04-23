@@ -8,6 +8,8 @@ public class Deck: MonoBehaviour
     public List<Card> cards;
     public Transform spawnPoint;
     public Color[] suitColors;
+    public string[] RankLables = new string[CardValue.MAX_RANKS + 1];
+
     private static readonly int MAX_RANKS = 13;
     private static readonly int SUIT_TYPES = 4;
 
@@ -34,12 +36,11 @@ public class Deck: MonoBehaviour
                 GameObject cardGO = Instantiate(cardPrefab, spawnPoint.position, Quaternion.identity) as GameObject;
                 Card card = cardGO.GetComponent<Card>();
 
-                card.SetRankAndSpite((CardValue.Rank)j, (CardValue.Suit)i, suitColors[i]);
+                card.SetRankAndSpite((CardValue.Rank)j, (CardValue.Suit)i, suitColors[i], RankLables[j]);
                 card.BlindCard();
                 cards.Add(card);
             }
         }
-
     }
 
     public void Shuffle()

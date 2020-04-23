@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 {
     public GameObject[] layoutZones;
     public Transform handTransform;
-    public bool movementDone = false;
+    [HideInInspector] public bool movementDone = false;
     public DropZone dropZone;
     private int currentActiveLayoutIndex;
 
@@ -42,7 +42,6 @@ public class Player : MonoBehaviour
 
     private void SelectActiveLayout()
     {
-
         // If there isn't a card to play in the currernt layout
         if (!IsThereAnyCardLeft())
         {
@@ -81,13 +80,12 @@ public class Player : MonoBehaviour
         // Wait for the player to play a card
         while(!HasPlayedCards())
         {
+            SelectActiveLayout();
             yield return null;
         }
 
         // Every time the player drop a card, the active layout will be the Hand
         ResetActiveLayout();
-
-        // TODO: Once the player has put some cards, we have to draw from the deck (if some left)
     }
 
 
@@ -125,14 +123,13 @@ public class Player : MonoBehaviour
         currentActiveLayoutIndex = 0;
         foreach (Card card in dropZone.GetPileOfCards())
         {
-            // TODO: change how I get the Hand Zone
-            Transform handZone = layoutZones[currentActiveLayoutIndex].GetComponent<Transform>();
             Transform cardTransform = card.GetComponent<Transform>();
-            cardTransform.SetParent(handZone);
+            cardTransform.SetParent(handTransform);
             // Make the card draggable
             card.GetComponent<CanvasGroup>().blocksRaycasts = true;
             // Rotate the card back to 0 degrees.
             cardTransform.rotation = Quaternion.identity;
+            card.ModifyAlphaColor(1f);
         }
 
         // Reset the Pile
@@ -166,6 +163,11 @@ public class Player : MonoBehaviour
     public bool HasPlayedCards()
     {
         return movementDone;
+    }
+
+    public int GetTotalCardsOnHand()
+    {
+        return handTransform.GetComponentsInChildren<Card>().Length;
     }
 
 }
