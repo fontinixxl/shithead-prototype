@@ -30,13 +30,15 @@ public class DropZone : MonoBehaviour, IDropHandler
             if (lastCard != null &&  card.GetRank() < lastCard.GetRank())
             {
                 // TODO: Improve
-                // If the card is comming from the Blind Zone, and it doesn't fit to the pile,
-                // we have to fake the original parent so the card will go to the Hand zone instead
+                // If the card is comming from the Blind Zone, we have to fake the original parent
+                // so the card will go to the Hand zone instead
                 // of going back to the blind zone (as it would be by default)
                 if (card.parentToReturnTo == blindZone)
                 {
                     card.parentToReturnTo = card.originalParent = hand;
                 }
+
+                GameManager.instance.GetCurrentTurnPlayer().movementDone = true;
 
                 return;
             }
@@ -46,17 +48,16 @@ public class DropZone : MonoBehaviour, IDropHandler
             // Set the parentToReturnto the "DragZone" (so it doesn't get back to the HandZone)
             // This is because the Draggable's OnEndDrag() method, by default, resets the parent 
             // to the original (the one it had when OnBeginDrag() was firts called)
-
             card.parentToReturnTo = transform;
             // Set the card object position the the dragZone so all the card object
             // will stack on it; on on the top of each other.
-
             card.transform.position = transform.position;
 
+            // Even though this is often done in the Card (OnEndDrag) we have to do it here
+            // as well to deal with the card the player has just dropped.
             card.transform.SetParent(transform);
 
             bool movementDone = true;
-            // Test: Special cards
             switch (card.GetRank())
             {
                 case CardValue.Rank.Two:
@@ -85,6 +86,8 @@ public class DropZone : MonoBehaviour, IDropHandler
 
     private void BurnPile()
     {
+        // SetActive false will force the execution of OnDisable() and there is where is the pile
+        // is reset
         gameObject.SetActive(false);
         foreach (Transform child in transform)
         {

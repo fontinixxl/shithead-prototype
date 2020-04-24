@@ -37,9 +37,13 @@ public class Deck: MonoBehaviour
                 Card card = cardGO.GetComponent<Card>();
 
                 card.SetRankAndSpite((CardValue.Rank)j, (CardValue.Suit)i, suitColors[i], RankLables[j]);
+                card.DisableDrag();
                 card.BlindCard();
                 cards.Add(card);
             }
+
+            if (GameManager.instance.debugMode)
+                return;
         }
     }
 

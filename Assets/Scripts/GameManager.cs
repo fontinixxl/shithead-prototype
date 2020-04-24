@@ -11,10 +11,12 @@ public class GameManager : MonoBehaviour
     public float cardDelay = 0.4f;
     // TODO: Refactor to count from the playZone Prefab
     public int playZones = 3;       // Total zones to place cards
+    public bool debugMode = false;
 
     private Player currentTurnPlayer;
     private List<Player> players;
     private const int CARDS_PER_ROW = 3;
+    int turnCount = 1;
 
     private void Awake()
     {
@@ -44,8 +46,10 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GameLoop()
     {
+
         foreach (Player player in players)
         {
+            Debug.Log("New Turn " + turnCount );
             currentTurnPlayer = player;
             yield return StartCoroutine(player.PlayRound());
 
@@ -64,15 +68,17 @@ public class GameManager : MonoBehaviour
             // 3.- player has less than 3 cards on the hand
             if (currentTurnPlayer.HasPlayedCards() && !deck.IsEmpty() && totalCardsLeft < CARDS_PER_ROW)
             {
-                // Draw cards (max 3 oviously) untill having 3
+                // Draw cards until having three
                 for (int i = 0; i < (CARDS_PER_ROW - totalCardsLeft) ; i++)
                 {
                     Card card = deck.Draw();
                     card.FaceUpCard();
                     yield return new WaitForSeconds(0.5f);
                     card.PlaceCardOnZone(currentTurnPlayer.handTransform);
+                    card.EnableDrag();
                 }
             }
+            turnCount++;
         }
 
         StartCoroutine(GameLoop());
@@ -89,9 +95,10 @@ public class GameManager : MonoBehaviour
 
                     Card card = deck.Draw();
                     card.PlaceCardOnZone(player.layoutZones[i].GetComponent<Transform>());
+                    card.EnableDrag();
 
                     // Cards are already blind in the Deck
-                    if (player.layoutZones[i].name != "BlindZone")
+                    if (player.layoutZones[i] != player.blindZone)
                     {
                         card.FaceUpCard();
                     }

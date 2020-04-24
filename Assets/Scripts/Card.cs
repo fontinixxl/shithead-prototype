@@ -60,7 +60,7 @@ public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHa
         transform.Rotate(0.0f, 0.0f, UnityEngine.Random.Range(minCardRotation, maxCardRotation));
 
         // In order to dettect the "Drop Zone" we need to have the Raycast on (off by default)
-        GetComponent<CanvasGroup>().blocksRaycasts = false;
+        DisableDrag();
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -82,8 +82,8 @@ public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHa
         {
             transform.rotation = Quaternion.identity;
             transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
-            // Allow raycast only if the card comes back to the hand again
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
+            // Make the card draggable only if the card comes back to the hand again
+            EnableDrag();
         }
 
         // Once the card is back to the hand we can deactivate the placeholder until further use.
@@ -154,6 +154,16 @@ public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHa
             tempColor.a = alpha;
             rankTexts[i].color = tempColor;
         }
+    }
+
+    public void EnableDrag()
+    {
+        GetComponent<CanvasGroup>().blocksRaycasts = true;
+    }
+
+    public void DisableDrag()
+    {
+        GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
     public int CompareTo(Card other)

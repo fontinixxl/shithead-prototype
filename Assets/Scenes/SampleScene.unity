@@ -243,6 +243,7 @@ MonoBehaviour:
   deck: {fileID: 1329484101}
   cardDelay: 0.4
   playZones: 3
+  debugMode: 0
 --- !u!4 &168424226
 Transform:
   m_ObjectHideFlags: 0
@@ -452,9 +453,11 @@ MonoBehaviour:
   - {fileID: 2008511963}
   - {fileID: 1381141185}
   - {fileID: 2139545534}
+  blindZone: {fileID: 2139545534}
   handTransform: {fileID: 2008511964}
   movementDone: 0
   dropZone: {fileID: 23682141}
+  currentActiveLayoutIndex: 0
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

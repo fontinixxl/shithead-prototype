@@ -7,10 +7,12 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public GameObject[] layoutZones;
+    public GameObject blindZone;
     public Transform handTransform;
     [HideInInspector] public bool movementDone = false;
     public DropZone dropZone;
-    private int currentActiveLayoutIndex;
+    // Debug (private)
+    public int currentActiveLayoutIndex;
 
     private void Awake()
     {
@@ -35,6 +37,7 @@ public class Player : MonoBehaviour
     
     private void SetNextActiveLayout()
     {
+        DeactivateCurrentLayout();
         currentActiveLayoutIndex++;
         // After the third layout, set back to 0 using module
         currentActiveLayoutIndex %= layoutZones.Length;
@@ -45,6 +48,9 @@ public class Player : MonoBehaviour
         // If there isn't a card to play in the currernt layout
         if (!IsThereAnyCardLeft())
         {
+            // Recursive exit condition
+            if (currentActiveLayoutIndex == layoutZones.Length)
+                return;
             // Increment the current active layout index
             SetNextActiveLayout();
             // Check again (recursive) for the current active layout if there are cards left
@@ -68,43 +74,58 @@ public class Player : MonoBehaviour
 
     public IEnumerator PlayRound()
     {
+        Debug.Log("Start PlayRound()");
         movementDone = false;
         SelectActiveLayout();
 
         if (!MovementAvailable())
         {
             PickUpPile();
+            Debug.Log("Picking up Pile");
             yield break;
         }
 
         // Wait for the player to play a card
         while(!HasPlayedCards())
         {
-            SelectActiveLayout();
+            if (!IsThereAnyCardLeft())
+                SelectActiveLayout();
+
             yield return null;
         }
 
+        GameObject previousZone = GetActiveLayout();
+        Debug.Log(" PlayRound: previousZone = " + previousZone.name);
+
         // Every time the player drop a card, the active layout will be the Hand
         ResetActiveLayout();
+
+        // check again if I have to pick up cards
+        if (previousZone == blindZone && IsThereAnyCardLeft())
+        {
+            PickUpPile();
+            Debug.Log("Picking up pile");
+        }
+
+        Debug.Log("End PlayRound()");
     }
 
 
     private bool MovementAvailable()
     {
+        // In the blind zone the rank it's not know so the movement will be allways allowed.
+        if (GetActiveLayout() == blindZone)
+            return true;
+
         Card lastCardDropped = dropZone.GetLastCardOnPile();
 
         // If there isn't any card on the pile (the player can put any card)
-        // or current layout is the blind, movement always allowed ; movement available ->true
         if (lastCardDropped == null)
             return true;
 
-        Card[] cards = GetCardsFromActiveLayout();
-        if (cards == null)
-            return false;
-
-        foreach (Card card in cards)
+        foreach (Card card in GetCardsFromActiveLayout())
         {
-            if (card.IsBlind() || (card.GetRank() >= lastCardDropped.GetRank())) 
+            if ((card.GetRank() >= lastCardDropped.GetRank())) 
                 return true;
         }
 
@@ -119,7 +140,6 @@ public class Player : MonoBehaviour
         // active layout must be the Hand
         DeactivateCurrentLayout();
         // Reset current active layout to be the hand
-        // TODO: Look for a better way than hardcode the index of the public value...
         currentActiveLayoutIndex = 0;
         foreach (Card card in dropZone.GetPileOfCards())
         {
@@ -146,6 +166,11 @@ public class Player : MonoBehaviour
         }
 
         return true;
+    }
+
+    private GameObject GetActiveLayout()
+    {
+        return layoutZones[currentActiveLayoutIndex];
     }
 
     // Turn on current layout raycast so the player can drag cards on it.
