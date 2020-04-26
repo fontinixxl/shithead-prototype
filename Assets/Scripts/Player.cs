@@ -48,8 +48,8 @@ public class Player : MonoBehaviour
         // If there isn't a card to play in the currernt layout
         if (!IsThereAnyCardLeft())
         {
-            // Recursive exit condition
-            if (currentActiveLayoutIndex == layoutZones.Length)
+            // Recursive exit condition; stop when reaching the last loyout
+            if (currentActiveLayoutIndex == (layoutZones.Length - 1))
                 return;
             // Increment the current active layout index
             SetNextActiveLayout();
