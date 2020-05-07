@@ -46,10 +46,10 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GameLoop()
     {
-
+        //Debug.Log("Number of players = " + players.Count);
         foreach (Player player in players)
         {
-            Debug.Log("New Turn " + turnCount );
+            Debug.Log("New Turn " + turnCount + " / " + player.name + " turn's");
             currentTurnPlayer = player;
             yield return StartCoroutine(player.PlayRound());
 
