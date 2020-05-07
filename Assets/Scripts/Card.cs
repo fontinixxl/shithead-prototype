@@ -23,6 +23,11 @@ public class Card : MonoBehaviour, IComparable<Card>, IBeginDragHandler, IDragHa
 
     public void Start()
     {
+        // When a card is instantiated, by default has no dragging and is blind
+        // as it will be place in the deck and would be cheating to see the card ;)
+        DisableDrag();
+        BlindCard();
+
         // Create a placeholder for the card to keep the place on the layout in case
         // we bring the card back to the hand, therefor keeping the original position.
         placeholder = new GameObject{name = "GhostCard"};

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Deck: MonoBehaviour
 {
-    public GameObject cardPrefab;
+    public Card cardPrefab;
     [HideInInspector]
     public List<Card> cards;
     public Transform spawnPoint;
@@ -33,15 +33,13 @@ public class Deck: MonoBehaviour
         {
             for (int j = 1; j < MAX_RANKS + 1; j++)
             {
-                GameObject cardGO = Instantiate(cardPrefab, spawnPoint.position, Quaternion.identity) as GameObject;
-                Card card = cardGO.GetComponent<Card>();
+                Card card = Instantiate(cardPrefab, spawnPoint.position, Quaternion.identity);
 
                 card.SetRankAndSpite((CardValue.Rank)j, (CardValue.Suit)i, suitColors[i], RankLables[j]);
-                card.DisableDrag();
-                card.BlindCard();
                 cards.Add(card);
             }
 
+            // DEBUG
             if (GameManager.instance.debugMode)
                 return;
         }
