@@ -265,6 +265,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3666076501928376912, guid: ab553b024d21c2c44b846fc5ec0a4b55,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3666076501928376913, guid: ab553b024d21c2c44b846fc5ec0a4b55,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -383,12 +388,12 @@ PrefabInstance:
     - target: {fileID: 3666076502969336072, guid: ab553b024d21c2c44b846fc5ec0a4b55,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.000030517578
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3666076502969336072, guid: ab553b024d21c2c44b846fc5ec0a4b55,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -17
+      value: -123.8
       objectReference: {fileID: 0}
     - target: {fileID: 3666076502969336072, guid: ab553b024d21c2c44b846fc5ec0a4b55,
         type: 3}
@@ -413,7 +418,7 @@ PrefabInstance:
     - target: {fileID: 3666076503309849717, guid: ab553b024d21c2c44b846fc5ec0a4b55,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -40.570007
+      value: -145.66
       objectReference: {fileID: 0}
     - target: {fileID: 3666076503309849717, guid: ab553b024d21c2c44b846fc5ec0a4b55,
         type: 3}
@@ -734,7 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4872ff64d98ee894f9e1266dc38be41d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardPrefab: {fileID: 2163766618842186015, guid: 61ef57def75881f4aa2ca02d6fd54676,
+  cardPrefab: {fileID: 785174330480803210, guid: 61ef57def75881f4aa2ca02d6fd54676,
     type: 3}
   cards: []
   spawnPoint: {fileID: 0}

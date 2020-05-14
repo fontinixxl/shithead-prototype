@@ -34,7 +34,6 @@ public class Deck: MonoBehaviour
             for (int j = 1; j < MAX_RANKS + 1; j++)
             {
                 Card card = Instantiate(cardPrefab, spawnPoint.position, Quaternion.identity);
-
                 card.SetRankAndSpite((CardValue.Rank)j, (CardValue.Suit)i, suitColors[i], RankLables[j]);
                 cards.Add(card);
             }
